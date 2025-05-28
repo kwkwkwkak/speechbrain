@@ -118,23 +118,17 @@ Encoder: !new:speechbrain.lobes.models.dual_path.Encoder
     out_channels: !ref <N_encoder_out>
 
 
-SBtfintra: !new:speechbrain.lobes.models.dual_path.SBTransformerBlock
+SBtfintra: !new:speechbrain.lobes.models.dual_path.BiMamba2Block
     num_layers: 8
     d_model: !ref <out_channels>
-    nhead: 8
-    d_ffn: 1024
-    dropout: 0
-    use_positional_encoding: True
-    norm_before: True
+    d_state: 64
+    d_conv: 4
 
-SBtfinter: !new:speechbrain.lobes.models.dual_path.SBTransformerBlock
+SBtfinter: !new:speechbrain.lobes.models.dual_path.BiMamba2Block
     num_layers: 8
     d_model: !ref <out_channels>
-    nhead: 8
-    d_ffn: 1024
-    dropout: 0
-    use_positional_encoding: True
-    norm_before: True
+    d_state: 64
+    d_conv: 4
 
 MaskNet: !new:speechbrain.lobes.models.dual_path.Dual_Path_Model
     num_spks: !ref <num_spks>

@@ -588,7 +588,6 @@ if __name__ == "__main__":
     if "pretrained_separator" not in hparams:
         for module in separator.modules.values():
             separator.reset_layer_recursively(module)
-
     # Training
     separator.fit(
         separator.hparams.epoch_counter,
@@ -596,6 +595,7 @@ if __name__ == "__main__":
         valid_data,
         train_loader_kwargs=hparams["dataloader_opts"],
         valid_loader_kwargs=hparams["dataloader_opts"],
+        progressbar=True
     )
 
     # Eval

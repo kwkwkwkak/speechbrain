@@ -23,6 +23,11 @@ from speechbrain.lobes.models.transformer.Transformer import (
 )
 from speechbrain.nnet.activations import Swish
 from speechbrain.nnet.linear import Linear
+from speechbrain.nnet.normalization import LayerNorm
+from speechbrain.lobes.models.mamba.BiMamba import (
+    BiMamba, 
+    BiMamba2,
+)
 
 EPS = 1e-8
 
@@ -535,7 +540,42 @@ class PytorchTransformerBlock(nn.Module):
             x = self.pos_encoder(x)
         return self.mdl(x)
 
-
+class BiMamba2Block(nn.Module):
+    def __init__(
+        self,
+        num_layers,
+        d_model,
+        d_state=16,
+        d_conv=4
+    ):
+        super().__init__()
+        
+        self.layers = nn.Sequential(
+            *[
+                # BiMamba2(
+                #     d_model=d_model,
+                #     d_state=d_state,
+                #     d_conv=d_conv,
+                #     expand=2,
+                #     use_mem_eff_path=False
+                # ) 
+                # for i in range(num_layers)
+                BiMamba2(
+                    d_model=d_model,
+                    d_state=d_state,
+                    d_conv=d_conv,
+                    expand=2
+                )
+                for _ in range(num_layers)
+            ]
+        )
+        
+        self.norm = LayerNorm(d_model, eps=1e-6)
+    def forward(self, x):
+        out = self.layers(x)
+        out = self.norm(out)
+        return out
+        
 class SBTransformerBlock(nn.Module):
     """A wrapper for the SpeechBrain implementation of the transformer encoder.
 
